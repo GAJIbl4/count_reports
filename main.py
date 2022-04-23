@@ -22,9 +22,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.open_btn.triggered.connect(self.open_file)
 
     def open_file(self):
-        self.folder = QtWidgets.QFileDialog.getExistingDirectory()
-        self.parsing_data()
-        self.count_reports()
+        folder = QtWidgets.QFileDialog.getExistingDirectory()
+
+        if folder:
+            self.folder = folder
+            self.parsing_data()
+            self.count_reports()
 
     def count_reports(self):
         unsorted_table = self.unsorted_table
@@ -82,6 +85,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             i += 1
 
     def parsing_data(self):
+        self.barcode_column = self.barcode_col_box.value()
+
         row_count = 0
         for file in os.listdir(self.folder):
             unread_count = 0
@@ -101,7 +106,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if str(sheet.cell(column=1, row=len(sheet['A']) - 1).value).isdigit():
                         row_count = int(sheet['A' + str(len(sheet['A']) - 1)].value)
                 for i in range(2, row_count + 1):
-                    if sheet.cell(row=i, column=self.barcode_column).value == "UNREADABLE":
+                    if str(sheet.cell(row=i, column=self.barcode_column).value).lower() == "unreadable":
                         unread_count += 1
                 if unread_count != 0:
                     unread_percent = round(unread_count / row_count * 100, 2)
