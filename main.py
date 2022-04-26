@@ -23,15 +23,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def open_file(self):
         self.folder = QtWidgets.QFileDialog.getExistingDirectory()
-        self.parsing_data()
-        self.count_reports()
+
+        if self.folder:
+            self.parsing_data()
+            self.count_reports()
 
     def count_reports(self):
         unsorted_table = self.unsorted_table
         sorted_table = self.sorted_table
-        self.barcode_column = self.barcode_col_box.value()
-        unsorted_table.setRowCount(0)
-        sorted_table.setRowCount(0)
         unsorted_table.setRowCount(len(self.warehouse))
         i = 0
 
@@ -82,6 +81,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             i += 1
 
     def parsing_data(self):
+        self.barcode_column = self.barcode_col_box.value()
+        self.unsorted_table.setRowCount(0)
+        self.sorted_table.setRowCount(0)
+        self.warehouse = {}
+        self.sorted_warehouse = {}
+
         row_count = 0
         for file in os.listdir(self.folder):
             unread_count = 0
